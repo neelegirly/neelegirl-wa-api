@@ -1,0 +1,38 @@
+{
+  "name": "neele-wa-session",
+  "version": "1.1.9",
+  "description": "Multi Session Whatsapp Library",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neelehoven/neele-wa-session.git"
+  },
+  "homepage": "https://github.com/neelehoven/neele-wa-session#readme",
+  "bugs": {
+    "url": "https://github.com/neelehoven/neele-wa-session"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "tsc && node ./dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "run-script": "node ./dist/index.js"
+  },
+  "author": "Neele",
+  "license": "ISC",
+  "dependencies": {
+    "@adiwajshing/keyed-db": "^0.2.4",
+    "@hapi/boom": "^10.0.1",
+    "@whiskeysockets/baileys": "6.7.13",
+    "mime": "^3.0.0",
+    "pino": "^9.6.0",
+    "qrcode-terminal": "^0.12.0"
+  },
+  "devDependencies": {
+    "@types/mime": "^3.0.1",
+    "package": "^1.0.1"
+  }
+}
