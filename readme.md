@@ -11,7 +11,7 @@ Stand above [Baileys](https://github.com/WhiskeySockets/Baileys) Library.
 Install package using npm
 
 ```bash
-npm install neele-wa-session@latest
+npm install @neelegirl/wa-api@latest
 ```
 
 Then import your code
@@ -19,13 +19,13 @@ Then import your code
 Using JS Module
 
 ```ts
-import * as onimai from "neele-wa-session";
+import * as onimai from "@neelegirl/wa-api";
 ```
 
 or using CommonJS
 
 ```ts
-const onimai = require("neele-wa-session");
+const onimai = require("@neelegirl/wa-api");
 ```
 
 ## Session Usage/Examples
