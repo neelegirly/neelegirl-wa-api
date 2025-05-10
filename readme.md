@@ -54,7 +54,7 @@ const loaded = await onimai.loadSessionsFromStorage();
 ## 💬 Nachrichten senden (`sendMessage`)
 
 ```js
-await onimai.sendMessage(sessionId, jidOrPhone, content, options);
+await onimai1.sendMessage(sessionId, jidOrPhone, content, options);
 ```
 
 ### ✨ Beispieltypen
@@ -83,7 +83,7 @@ await onimai.sendMessage(sessionId, jidOrPhone, content, options);
 ### Nachricht löschen (Revoke)
 
 ```js
-await onimai.relayMessage(sessionId, chatJid, {
+await onimai1.relayMessage(sessionId, chatJid, {
   protocolMessage: {
     key: { remoteJid: chatJid, fromMe: true, id: targetId },
     type: 7
@@ -94,7 +94,7 @@ await onimai.relayMessage(sessionId, chatJid, {
 ### Ephemeral-Modus (24h ein/aus)
 
 ```js
-await onimai.relayMessage(sessionId, groupJid, {
+await onimai1.relayMessage(sessionId, groupJid, {
   disappearingMessagesInChat: onimai.Defaults.WA_DEFAULT_EPHEMERAL
 }, {});
 
@@ -106,7 +106,7 @@ await onimai.relayMessage(sessionId, groupJid, {
 ### Status posten (Story)
 
 ```js
-await onimai.relayMessage(sessionId, 'status@broadcast', {
+await onimai1.relayMessage(sessionId, 'status@broadcast', {
   videoMessage: { url: './story.mp4' },
   caption: 'Meine Story'
 }, {
@@ -117,7 +117,7 @@ await onimai.relayMessage(sessionId, 'status@broadcast', {
 ### Weiterleiten
 
 ```js
-await onimai.relayMessage(sessionId, chatJid, {
+await onimai1.relayMessage(sessionId, chatJid, {
   forward: origMsg
 }, { messageId: origMsg.key.id });
 ```
@@ -125,7 +125,7 @@ await onimai.relayMessage(sessionId, chatJid, {
 ### Profilbild ändern
 
 ```js
-await onimai.relayMessage(sessionId, userJid, {
+await onimai1.relayMessage(sessionId, userJid, {
   profilePictureChange: {
     displayPicture: fs.readFileSync('./newprofile.jpg')
   }
@@ -135,7 +135,7 @@ await onimai.relayMessage(sessionId, userJid, {
 ### Chat als gelesen markieren
 
 ```js
-await onimai.relayMessage(sessionId, chatJid, {
+await onimai1.relayMessage(sessionId, chatJid, {
   protocolMessage: {
     key: { remoteJid: chatJid },
     type: 3
@@ -146,11 +146,11 @@ await onimai.relayMessage(sessionId, chatJid, {
 ### Eigene Nachrichten-ID festlegen
 
 ```js
-await onimai.relayMessage(
+await onimai1.relayMessage(
   msg.sessionId,
   msg.key.remoteJid,
   { conversation: 'Custom Message ID' },
-  { messageId: `nishi${Date.now()}` }
+  { messageId: `onimai${Date.now()}` }
 );
 ```
 
@@ -170,7 +170,7 @@ onimai.onMessageReceived(msg => console.log('📥 Nachricht:', msg));
 
 ```js
 try {
-  await onimai.sendMessage(...);
+  await onimai1.sendMessage(...);
 } catch (e) {
   console.error('⚠️ Fehler:', e);
 }
