@@ -1,250 +1,184 @@
-# Onimai Multi Session - Connecting More Whatsapp Session in 1 App
 
-Connecting Your app with Whatsapp Messaging
+# 💌 @neelegirl/wa-api → **onimai**
 
-Lightweight library for whatsapp. Not require Selenium or any other browser.
+✨ *Elegante & einfache WhatsApp-Bibliothek* zur Verwaltung **mehrerer Sessions** – mit **universeller `sendMessage`-Funktion** und direkter `relayMessage`-Unterstützung für Profis.
 
-Stand above [Baileys](https://github.com/WhiskeySockets/Baileys) Library.
+---
 
-## Installation
+## 📚 Inhaltsverzeichnis
 
-Install package using npm
+1. [📦 Installation](#-installation)  
+2. [🔌 Import & Setup](#-import--setup)  
+3. [📲 Session Management](#-session-management)  
+4. [💬 Nachrichten senden (`sendMessage`)](#-nachrichten-senden-sendmessage)  
+5. [🔧 Spezialfunktionen (`relayMessage`)](#-spezialfunktionen-relaymessage)  
+6. [🎧 Listener](#-listener)  
+7. [🚨 Fehlerbehandlung](#-fehlerbehandlung)
+
+---
+
+## 📦 Installation
 
 ```bash
 npm install @neelegirl/wa-api@latest
 ```
 
-Then import your code
+---
 
-Using JS Module
+## 🔌 Import & Setup
 
-```ts
-import * as onimai from "@neelegirl/wa-api";
+```js
+// CommonJS
+const onimai = require('@neelegirl/wa-api');
+
+// ES Module
+import * as onimai from '@neelegirl/wa-api';
 ```
 
-or using CommonJS
+---
 
-```ts
-const onimai = require("@neelegirl/wa-api");
-```
+## 📲 Session Management
 
-## Session Usage/Examples
-
-Start New Session
-
-```ts
-const session = await onimai.startSession("mysessionid");
-// Then, scan QR on terminal
-```
-
-Start New Session with pairingcode
-
-```ts
-const session = await onimai.startSessionWithPairingCode("mysessionid", { phoneNumber: "4267256437" });
-console.log(session);
-```
-
-Get All Session ID
-
-```ts
-const sessions = onimai.getAllSession();
-```
-
-Get Session Data By ID
-
-```ts
-const session = onimai.getSession("mysessionid");
-```
-
-Load Session From Storage / Load Saved Session
-
-```ts
-onimai.loadSessionsFromStorage();
-```
-
-## Messaging Usage/Examples
-
-Kick a user
-
-```ts
-await onimai.kickusr({
-  sessionId: "mysessionid",
-  to: chatId,
-  text: "436779437@s.whatsapp.net",
+```js
+await onimai.startSession('session1');
+await onimai.startSessionWithPairingCode('session2', {
+  phoneNumber: '491234567890'
 });
+const all = onimai.getAllSession();
+const one = onimai.getSession('session1');
+const loaded = await onimai.loadSessionsFromStorage();
 ```
 
-Send Text Message
+---
 
-```ts
-await onimai.sendTextMessage({
-  sessionId: "mysessionid",
-  to: "436779437",
-  isGroup: false,
-  text: "Hi There, This is Message from Server!",
-  Jid: ["@436779437"],
-});
+## 💬 Nachrichten senden (`sendMessage`)
+
+```js
+await onimai.sendMessage(sessionId, jidOrPhone, content, options);
 ```
 
-Send Image
+### ✨ Beispieltypen
 
-```ts
-const image = fs.readFileSync("./myimage.png");
-const send = await onimai.sendImage({
-  sessionId: "session1",
-  to: "436779437",
-  text: "My Image Caption",
-  media: image,
-});
-```
+| 📨 Typ        | 📘 Beschreibung              | 🧾 Inhalt Beispiel |
+|--------------|------------------------------|--------------------|
+| **Text**     | Einfache Nachricht           | `{ text: 'Hallo!' }` |
+| **Bild**     | Bild mit Caption             | `{ image: { url: './img.png' }, caption: 'Hey' }` |
+| **Video**    | Video mit Caption            | `{ video: { url: './vid.mp4' }, caption: 'Video' }` |
+| **GIF**      | Loop-Video                   | `{ video: { url: './gif.mp4' }, gifPlayback: true }` |
+| **Audio**    | Voice Note (OGG/Opus)        | `{ audio: fs.createReadStream('voice.ogg'), mimetype: 'audio/ogg', ptt: true }` |
+| **Dokument** | PDF o.ä. senden              | `{ document: { url: './doc.pdf', filename: 'Beispiel.pdf' } }` |
+| **Umfrage**  | Poll-Optionen                | `{ pollCreationMessage: { name: 'Frage?', options: [...], selectableCount: 1 } }` |
+| **Reaktion** | Emoji antworten              | `{ react: { text: '❤️', key: msg.key } }` |
+| **Löschen**  | Nachricht zurückziehen       | `{ delete: msg.key }` |
+| **Pin**      | Nachricht anpinnen           | `{ pin: { type: 1, time: 3600, key: msg.key } }` |
+| **Kontakt**  | vCard teilen                 | `{ contacts: { displayName: 'Max', contacts: [{ vcard }] } }` |
+| **Standort** | Standort senden              | `{ location: { degreesLatitude: 52.52, degreesLongitude: 13.405 } }` |
+| **Weiterleiten** | Nachricht weitergeben    | `{ forward: origMsg }` |
+| **Status**   | Story posten                 | `{ video: { url: 'story.mp4' }, caption: 'Mein Status' }` |
 
-Send Video
+---
 
-```ts
-const video = fs.readFileSync("./myvideo.mp4");
-const send = await onimai.sendVideo({
-  sessionId: "session1",
-  to: "436779437",
-  text: "My Video Caption",
-  media: video,
-});
-```
+## 🔧 Spezialfunktionen (`relayMessage`)
 
-Send Document File
+### Nachricht löschen (Revoke)
 
-```ts
-const filename = "mydocument.docx";
-const document = fs.readFileSync(filename);
-const send = await onimai.sendDocument({
-  sessionId: "session1",
-  to: "436779437",
-  filename,
-  media: document,
-  text: "Hei, Check this Document",
-});
-```
-
-Send Voice Note
-
-```ts
-const filename = "myaudio.mp3";
-const audio = fs.readFileSync(filename);
-const send = await onimai.sendVoiceNote({
-  sessionId: "session1",
-  to: "436779437",
-  media: audio,
-});
-```
-
-Delete a message
-
-```ts
-const send = await onimai.del({
-  sessionId: "session1",
-  to: "436779437",
-  id: "ueifjs3230",
-  sender: "439137310",
-});
-```
-
-Read a Message
-
-```ts
-await onimai.readMessage({
-  sessionId: "session1",
-  key: msg.key,
-});
-```
-
-Send Typing Effect
-
-```ts
-await onimai.sendTyping({
-  sessionId: "session1",
-  to: "436779437",
-  duration: 3000,
-});
-```
-
-## Listener Usage/Examples
-
-Add Listener/Callback When Receive a Message
-
-```ts
-onimai.onMessageReceived((msg) => {
-  console.log(`New Message Received On Session: ${msg.sessionId} >>>`, msg);
-});
-```
-
-Add Listener/Callback When QR Printed
-
-```ts
-onimai.onQRUpdated(({ sessionId, qr }) => {
-  console.log(qr);
-});
-```
-
-Add Listener/Callback When Session Connected
-
-```ts
-onimai.onConnected((sessionId) => {
-  console.log("session connected :" + sessionId);
-});
-```
-
-## Handling Incoming Message Examples
-
-```ts
-onimai.onMessageReceived(async (msg) => {
-  if (msg.key.fromMe || msg.key.remoteJid.includes("status")) return;
-  await onimai.readMessage({
-    sessionId: msg.sessionId,
-    key: msg.key,
-  });
-  await onimai.sendTyping({
-    sessionId: msg.sessionId,
-    to: msg.key.remoteJid,
-    duration: 3000,
-  });
-  await onimai.sendTextMessage({
-    sessionId: msg.sessionId,
-    to: msg.key.remoteJid,
-    text: "Hallo!",
-    answering: msg,
-  });
-});
-```
-
-## Save Media Message (Image, Video, Document)
-
-```ts
-onimai.onMessageReceived(async (msg) => {
-  if (msg.message?.imageMessage) {
-    msg.saveImage("./myimage.jpg");
+```js
+await onimai.relayMessage(sessionId, chatJid, {
+  protocolMessage: {
+    key: { remoteJid: chatJid, fromMe: true, id: targetId },
+    type: 7
   }
-  if (msg.message?.videoMessage) {
-    msg.saveVideo("./myvideo.mp4");
-  }
-  if (msg.message?.documentMessage) {
-    msg.saveDocument("./mydocument");
-  }
+}, { messageId: targetId });
+```
+
+### Ephemeral-Modus (24h ein/aus)
+
+```js
+await onimai.relayMessage(sessionId, groupJid, {
+  disappearingMessagesInChat: onimai.Defaults.WA_DEFAULT_EPHEMERAL
+}, {});
+
+await onimai.relayMessage(sessionId, groupJid, {
+  disappearingMessagesInChat: 0
+}, {});
+```
+
+### Status posten (Story)
+
+```js
+await onimai.relayMessage(sessionId, 'status@broadcast', {
+  videoMessage: { url: './story.mp4' },
+  caption: 'Meine Story'
+}, {
+  statusJidList: ['491234567890@s.whatsapp.net']
 });
 ```
 
-## Optional Configuration Usage/Examples
+### Weiterleiten
 
-Einstellen der von ihnen gewählte speicher ort
-
-```ts
-onimai.setCredentialsDir("my_custom_dir");
+```js
+await onimai.relayMessage(sessionId, chatJid, {
+  forward: origMsg
+}, { messageId: origMsg.key.id });
 ```
 
-Einstellen der von ihnen gewählte namens der session
+### Profilbild ändern
 
-```ts
-onimai.setCredentials("_credentials");
+```js
+await onimai.relayMessage(sessionId, userJid, {
+  profilePictureChange: {
+    displayPicture: fs.readFileSync('./newprofile.jpg')
+  }
+}, { messageId: 'updateProfile' });
 ```
 
-## Feedback or Support
+### Chat als gelesen markieren
 
-contact [neelehoven@gmail.com](mailto:neelehoven@gmail.com)
+```js
+await onimai.relayMessage(sessionId, chatJid, {
+  protocolMessage: {
+    key: { remoteJid: chatJid },
+    type: 3
+  }
+}, { messageId: 'markRead' });
+```
+
+### Eigene Nachrichten-ID festlegen
+
+```js
+await onimai.relayMessage(
+  msg.sessionId,
+  msg.key.remoteJid,
+  { conversation: 'Custom Message ID' },
+  { messageId: `nishi${Date.now()}` }
+);
+```
+
+---
+
+## 🎧 Listener
+
+```js
+onimai.onConnected(id => console.log('✅ Online:', id));
+onimai.onQRUpdated(info => console.log('📲 QR-Code:', info));
+onimai.onMessageReceived(msg => console.log('📥 Nachricht:', msg));
+```
+
+---
+
+## 🚨 Fehlerbehandlung
+
+```js
+try {
+  await onimai.sendMessage(...);
+} catch (e) {
+  console.error('⚠️ Fehler:', e);
+}
+```
+
+---
+
+## 👩‍💻 Autorin & Support
+
+© 2026 **@neelegirl/wa-api**  
+💌 Support: [neelehoven@gmail.com](mailto:neelehoven@gmail.com)
